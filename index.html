@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Partners Dental Solutions — Appliance Configurator</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#eee;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+.shell{display:flex;height:700px;width:100%;max-width:1100px;background:#F5F5F5;border-radius:12px;overflow:hidden;border:1px solid #ddd;position:relative;}
+.sidebar{width:196px;min-width:196px;background:#111;display:flex;flex-direction:column;z-index:2;}
+.sb-top{padding:16px 14px 14px;border-bottom:1px solid #1e1e1e;}
+.sb-logo-partners{font-size:12px;font-weight:600;color:#fff;letter-spacing:.04em;line-height:1.2;text-transform:uppercase;}
+.sb-logo-solutions{font-size:12px;font-weight:700;color:#c41227;letter-spacing:.04em;text-transform:uppercase;}
+.pt{padding:10px 14px;border-bottom:1px solid #1a1a1a;}
+.pt-name{font-size:11px;font-weight:500;color:#fff;}
+.pt-sub{font-size:10px;color:#444;margin-top:1px;}
+.pt-pill{display:inline-block;margin-top:5px;font-size:9px;padding:2px 7px;border-radius:20px;border:1px solid;}
+.pt-pill.none{color:#444;background:#161616;border-color:#222;}
+.pt-pill.scan{color:#555;background:#161616;border-color:#222;}
+.pt-pill.ready{color:#3B6D11;background:#0e1a0e;border-color:#1a3a1a;}
+.nl{padding:8px 14px 3px;font-size:9px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;color:#333;}
+.ni{display:flex;align-items:center;gap:7px;padding:6px 14px;font-size:11px;color:#444;cursor:pointer;}
+.ni.done{color:#3B6D11;}.ni.done .nd{background:#3B6D11;}
+.ni.on{color:#fff;}.ni.on .nd{background:#c41227;}
+.ni.dim{color:#2a2a2a;}
+.nd{width:4px;height:4px;border-radius:50%;background:#252525;flex-shrink:0;}
+.sb-bot{margin-top:auto;padding:10px 14px;border-top:1px solid #1a1a1a;font-size:10px;color:#333;display:flex;align-items:center;gap:7px;}
+.av{width:22px;height:22px;border-radius:50%;background:#1c1c1c;border:1px solid #2a2a2a;display:flex;align-items:center;justify-content:center;font-size:9px;color:#555;font-weight:500;}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.topbar{height:44px;min-height:44px;background:#fff;border-bottom:1px solid #eee;display:flex;align-items:center;padding:0 16px;gap:6px;}
+.bc{display:flex;align-items:center;gap:4px;flex:1;}
+.bs{font-size:10px;color:#ccc;padding:2px 7px;border-radius:20px;}
+.bs.done{color:#888;cursor:pointer;}
+.bs.on{color:#c41227;font-weight:500;background:#fef0f2;border:1px solid #fcc;}
+.bx{font-size:9px;color:#ddd;}
+.tbtn{font-size:10px;padding:5px 11px;border-radius:7px;border:1px solid #ddd;background:transparent;color:#333;cursor:pointer;font-family:inherit;}
+.tbtn:hover{background:#f5f5f5;}
+.tbtn.r{background:#c41227;color:#fff;border-color:#c41227;}
+.tbtn.r:hover{background:#a80f1f;}
+.tbtn.r:disabled{background:#e8a0a8;border-color:#e8a0a8;cursor:not-allowed;}
+.screen{flex:1;display:none;overflow:hidden;}
+.screen.active{display:flex;}
+.bbar{height:42px;min-height:42px;background:#fff;border-top:1px solid #eee;display:flex;align-items:center;padding:0 16px;gap:6px;}
+.spills{display:flex;gap:5px;flex:1;}
+.sp{font-size:9px;padding:3px 9px;border-radius:20px;border:1px solid #eee;color:#ccc;display:flex;align-items:center;gap:3px;}
+.sp.done{color:#666;border-color:#ddd;}
+.sp.done::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:#3B6D11;}
+.sp.curr{background:#fef0f2;color:#c41227;border-color:#fcc;font-weight:500;}
+.sp.curr::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:#c41227;}
+.dashboard{flex:1;overflow-y:auto;padding:18px;}
+.dash-greeting{font-size:14px;font-weight:500;color:#222;margin-bottom:4px;}
+.dash-sub{font-size:10px;color:#aaa;margin-bottom:16px;}
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;}
+.stat-card{background:#fff;border:1px solid #eee;border-radius:10px;padding:12px 14px;}
+.sc-num{font-size:20px;font-weight:500;color:#222;}
+.sc-num.red{color:#c41227;}
+.sc-lbl{font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.07em;margin-top:2px;}
+.notif-row{background:#fff;border:1px solid #eee;border-radius:10px;padding:12px 14px;margin-bottom:16px;}
+.notif-head{font-size:9px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:#bbb;margin-bottom:8px;}
+.notif-item{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid #f5f5f5;}
+.notif-item:last-child{border-bottom:none;padding-bottom:0;}
+.notif-dot{width:7px;height:7px;border-radius:50%;margin-top:3px;flex-shrink:0;}
+.notif-dot.red{background:#c41227;}
+.notif-dot.amber{background:#c89000;}
+.notif-dot.green{background:#3B6D11;}
+.notif-text{font-size:10px;color:#555;line-height:1.4;}
+.notif-time{font-size:9px;color:#bbb;margin-top:1px;}
+.queue-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.queue-title{font-size:9px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:#bbb;}
+.queue-new{font-size:10px;color:#c41227;cursor:pointer;background:#fef0f2;border:1px solid #fcc;border-radius:20px;padding:3px 10px;}
+.case-list{display:flex;flex-direction:column;gap:6px;}
+.case-row{background:#fff;border:1px solid #eee;border-radius:9px;padding:10px 12px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:border-color .14s;}
+.case-row:hover{border-color:#c41227;}
+.case-init{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;flex-shrink:0;}
+.case-info{flex:1;min-width:0;}
+.case-name{font-size:11px;font-weight:500;color:#222;}
+.case-meta{font-size:9px;color:#aaa;margin-top:1px;}
+.case-badge{font-size:9px;padding:2px 8px;border-radius:20px;border:1px solid;white-space:nowrap;}
+.case-badge.pending{color:#7a5a00;background:#fff8e6;border-color:#f0d080;}
+.case-badge.submitted{color:#3B6D11;background:#eaf5e0;border-color:#b5d97a;}
+.case-badge.review{color:#c41227;background:#fef0f2;border-color:#fcc;}
+.new-btn-big{display:flex;align-items:center;justify-content:center;gap:8px;background:#c41227;color:#fff;border:none;border-radius:10px;padding:12px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;width:100%;margin-top:12px;}
+.new-btn-big:hover{background:#a80f1f;}
+.intake-wrap{flex:1;display:flex;align-items:center;justify-content:center;background:#F5F5F5;}
+.intake-card{background:#fff;border:1px solid #eee;border-radius:14px;padding:28px;width:400px;}
+.ic-title{font-size:14px;font-weight:500;color:#222;margin-bottom:4px;}
+.ic-sub{font-size:10px;color:#aaa;margin-bottom:20px;}
+.ic-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+.ic-opt{border:1px solid #eee;border-radius:10px;padding:16px 12px;cursor:pointer;text-align:center;background:#fafafa;transition:all .15s;}
+.ic-opt:hover{border-color:#c41227;}
+.ic-opt.on{border-color:#c41227;background:#fef5f6;}
+.ic-opt-icon{width:36px;height:36px;border-radius:9px;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;}
+.ic-opt-label{font-size:11px;font-weight:500;color:#333;}
+.ic-opt.on .ic-opt-label{color:#c41227;}
+.ic-opt-sub{font-size:9px;color:#bbb;margin-top:2px;}
+.field-wrap{margin-bottom:14px;}
+.field-label{font-size:9px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:#bbb;margin-bottom:5px;}
+.field-row{display:flex;gap:7px;}
+.fi{flex:1;font-size:11px;color:#333;background:#fafafa;border:1px solid #eee;border-radius:7px;padding:8px 10px;font-family:inherit;outline:none;}
+.fi:focus{border-color:#c41227;}
+.fi::placeholder{color:#ccc;}
+.search-results{border:1px solid #eee;border-radius:8px;overflow:hidden;margin-top:6px;display:none;}
+.sr-item{padding:8px 12px;font-size:11px;cursor:pointer;border-bottom:1px solid #f5f5f5;display:flex;align-items:center;justify-content:space-between;}
+.sr-item:last-child{border-bottom:none;}
+.sr-item:hover{background:#fef5f6;}
+.sr-name{font-weight:500;color:#222;}
+.sr-item:hover .sr-name{color:#c41227;}
+.sr-meta{font-size:9px;color:#bbb;}
+.ic-continue{width:100%;padding:10px;border-radius:8px;background:#c41227;color:#fff;border:none;font-size:11px;font-weight:500;cursor:pointer;font-family:inherit;}
+.ic-continue:hover{background:#a80f1f;}
+.scan-wrap{flex:1;display:flex;align-items:center;justify-content:center;background:#F5F5F5;}
+.scan-card{background:#fff;border:1px solid #eee;border-radius:14px;padding:28px;width:420px;text-align:center;}
+.scan-patient{display:flex;align-items:center;gap:10px;background:#fafafa;border:1px solid #eee;border-radius:9px;padding:10px 12px;margin-bottom:20px;text-align:left;}
+.sp-init{width:32px;height:32px;border-radius:50%;background:#fef0f2;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;color:#c41227;flex-shrink:0;}
+.sp-name{font-size:11px;font-weight:500;color:#222;}
+.sp-meta{font-size:9px;color:#aaa;margin-top:1px;}
+.scan-entry{text-align:left;margin-bottom:16px;}
+.scan-source{display:flex;gap:6px;margin-bottom:10px;}
+.src-btn{padding:5px 12px;border-radius:20px;border:1px solid #eee;font-size:10px;color:#888;cursor:pointer;background:#fafafa;font-family:inherit;transition:all .14s;}
+.src-btn.on{background:#111;color:#fff;border-color:#111;}
+.scan-input-row{display:flex;gap:7px;align-items:stretch;}
+.scan-fetch{padding:8px 14px;border-radius:7px;background:#c41227;color:#fff;border:none;font-size:11px;cursor:pointer;font-family:inherit;white-space:nowrap;}
+.scan-fetch:hover{background:#a80f1f;}
+.scan-status{margin-top:14px;min-height:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;}
+.progress-track{width:100%;height:3px;background:#f0f0f0;border-radius:2px;overflow:hidden;margin-top:4px;}
+.progress-bar{height:100%;width:0%;background:#c41227;border-radius:2px;transition:width .08s linear;}
+.scan-msg{font-size:10px;color:#aaa;}
+.scan-ok-icon{width:36px;height:36px;border-radius:50%;background:#0e1a0e;border:1.5px solid #3B6D11;display:flex;align-items:center;justify-content:center;}
+.scan-ok-label{font-size:11px;font-weight:500;color:#3B6D11;}
+.scan-ok-sub{font-size:10px;color:#aaa;}
+.scan-proceed{width:100%;padding:10px;border-radius:8px;background:#c41227;color:#fff;border:none;font-size:11px;font-weight:500;cursor:pointer;font-family:inherit;margin-top:8px;display:none;}
+.scan-proceed:hover{background:#a80f1f;}
+.stage{flex:1;background:#F0F0F0;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.stage-tag{position:absolute;top:10px;left:10px;background:#fff;border:1px solid #e8e8e8;border-radius:7px;padding:4px 9px;font-size:9px;color:#999;display:flex;align-items:center;gap:5px;}
+.gdot{width:5px;height:5px;border-radius:50%;background:#3B6D11;animation:blink 1.6s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+.vtog{position:absolute;top:10px;right:10px;display:flex;border:1px solid #e0e0e0;border-radius:7px;overflow:hidden;background:#fff;}
+.vb{font-size:9px;padding:4px 8px;border:none;background:transparent;color:#999;cursor:pointer;font-family:inherit;}
+.vb.on{background:#111;color:#fff;}
+.canvas{width:300px;height:300px;position:relative;}
+.arch-base{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);}
+.ilayer{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;}
+.pi{position:absolute;transform:translate(-50%,-50%) scale(.15);opacity:0;transition:all .38s cubic-bezier(.34,1.56,.64,1);}
+.pi.in{transform:translate(-50%,-50%) scale(1);opacity:1;}
+.price-strip{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:#fff;border:1px solid #e8e8e8;border-radius:8px;padding:6px 14px;display:flex;align-items:center;gap:12px;white-space:nowrap;}
+.ps-label{font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.07em;}
+.ps-total{font-size:16px;font-weight:500;color:#c41227;}
+.ps-break{font-size:9px;color:#bbb;}
+.panel{width:252px;min-width:252px;background:#fff;border-left:1px solid #eee;display:flex;flex-direction:column;overflow-y:auto;}
+.psec{padding:12px 14px;border-bottom:1px solid #f2f2f2;}
+.plbl{font-size:9px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;color:#bbb;margin-bottom:8px;}
+.catr{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+.cb{padding:7px 4px;border-radius:7px;border:1px solid #e8e8e8;font-size:10px;color:#777;cursor:pointer;text-align:center;background:#fafafa;transition:all .14s;}
+.cb:hover{border-color:#c41227;color:#c41227;}
+.cb.on{background:#c41227;color:#fff;border-color:#c41227;font-weight:500;}
+.app-list{display:flex;flex-direction:column;gap:5px;}
+.arow{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;border:1px solid #eee;cursor:pointer;background:#fafafa;transition:all .14s;}
+.arow:hover{border-color:#c41227;}
+.arow.on{border-color:#c41227;background:#fef5f6;}
+.arow-icon{width:38px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:5px;background:#f0f0f0;flex-shrink:0;}
+.arow-info{flex:1;min-width:0;}
+.arow-name{font-size:11px;font-weight:500;color:#222;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.arow.on .arow-name{color:#c41227;}
+.arow-price{font-size:10px;color:#aaa;}
+.arow.on .arow-price{color:#c41227;}
+.arow-check{width:14px;height:14px;border-radius:50%;border:1.5px solid #ddd;flex-shrink:0;}
+.arow.on .arow-check{background:#c41227;border-color:#c41227;}
+.att-list{display:flex;flex-direction:column;gap:4px;}
+.at{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;border-radius:7px;border:1px solid #eee;cursor:pointer;background:#fafafa;font-size:10px;color:#777;transition:all .14s;}
+.at:hover{border-color:#c41227;}
+.at.on{background:#fef5f6;border-color:#c41227;color:#c41227;}
+.at-price{font-size:9px;color:#bbb;}
+.at.on .at-price{color:#c41227;}
+.na{font-size:10px;color:#ccc;font-style:italic;padding:2px 0;}
+.swrow{display:flex;gap:6px;flex-wrap:wrap;}
+.sw{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:border-color .12s;}
+.sw.on{border-color:#111;}
+.pfooter{padding:12px 14px;margin-top:auto;border-top:1px solid #f0f0f0;}
+.pbar{height:2px;background:#f0f0f0;border-radius:2px;overflow:hidden;margin-bottom:8px;}
+.pfill{height:100%;background:#c41227;border-radius:2px;transition:width .4s;}
+.pfootlbl{font-size:9px;color:#bbb;margin-bottom:6px;}
+.review-col{flex:1;overflow-y:auto;padding:20px;}
+.rsec{background:#fff;border-radius:10px;border:1px solid #eee;margin-bottom:12px;overflow:hidden;}
+.rsec-head{padding:11px 14px;border-bottom:1px solid #f2f2f2;display:flex;align-items:center;justify-content:space-between;}
+.rsec-title{font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:#bbb;}
+.rsec-edit{font-size:10px;color:#c41227;cursor:pointer;border:none;background:transparent;font-family:inherit;padding:0;}
+.rsec-body{padding:12px 14px;}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;}
+.ig-label{font-size:9px;color:#bbb;text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px;}
+.ig-val{font-size:12px;color:#222;font-weight:500;}
+.order-rows{display:flex;flex-direction:column;gap:6px;}
+.orow{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:7px;background:#fafafa;border:1px solid #f0f0f0;}
+.orow-left{display:flex;align-items:center;gap:9px;}
+.orow-dot{width:6px;height:6px;border-radius:50%;background:#c41227;flex-shrink:0;}
+.orow-dot.gray{background:#bbb;}
+.orow-name{font-size:11px;color:#333;}
+.orow-type{font-size:9px;color:#bbb;margin-top:1px;}
+.orow-price{font-size:11px;font-weight:500;color:#222;}
+.divider{height:1px;background:#f0f0f0;margin:8px 0;}
+.total-row{display:flex;align-items:center;justify-content:space-between;padding:4px 10px;}
+.total-label{font-size:11px;color:#999;}
+.total-val{font-size:15px;font-weight:500;color:#c41227;}
+.priority-row{display:flex;gap:6px;}
+.pflag{padding:6px 10px;border-radius:7px;border:1px solid #eee;font-size:10px;color:#888;cursor:pointer;background:#fafafa;transition:all .14s;display:flex;align-items:center;gap:5px;}
+.pflag.on.standard{background:#e9f5ff;border-color:#b0d4f0;color:#185FA5;}
+.pflag.on.rush{background:#fff8e6;border-color:#f0d080;color:#7a5a00;}
+.pflag.on.urgent{background:#fef0f2;border-color:#f5c0c7;color:#c41227;}
+.pflag-dot{width:6px;height:6px;border-radius:50%;}
+.pflag.standard .pflag-dot{background:#185FA5;}
+.pflag.rush .pflag-dot{background:#c89000;}
+.pflag.urgent .pflag-dot{background:#c41227;}
+.date-row{display:flex;align-items:center;gap:8px;}
+.date-input{font-size:11px;color:#333;background:#fafafa;border:1px solid #eee;border-radius:7px;padding:7px 10px;flex:1;font-family:inherit;outline:none;}
+.date-input:focus{border-color:#c41227;}
+textarea.notes{width:100%;font-size:11px;color:#333;background:#fafafa;border:1px solid #eee;border-radius:7px;padding:9px 10px;font-family:inherit;resize:none;outline:none;line-height:1.5;}
+textarea.notes:focus{border-color:#c41227;}
+textarea.notes::placeholder{color:#ccc;}
+.sig-box{border:1px dashed #ddd;border-radius:8px;height:70px;position:relative;overflow:hidden;cursor:crosshair;}
+.sig-canvas{position:absolute;top:0;left:0;width:100%;height:100%;}
+.sig-prompt{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:10px;color:#ccc;display:flex;flex-direction:column;align-items:center;gap:4px;pointer-events:none;text-align:center;}
+.sig-clear{position:absolute;top:5px;right:7px;font-size:9px;color:#c41227;cursor:pointer;border:none;background:transparent;font-family:inherit;display:none;}
+.sig-label{font-size:9px;color:#bbb;margin-top:5px;}
+.checklist{display:flex;flex-direction:column;gap:5px;}
+.chk{display:flex;align-items:center;gap:8px;cursor:pointer;}
+.chk-box{width:15px;height:15px;border-radius:4px;border:1.5px solid #ddd;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .14s;}
+.chk.checked .chk-box{background:#c41227;border-color:#c41227;}
+.chk-label{font-size:10px;color:#777;}
+.chk.checked .chk-label{color:#333;}
+.submit-col{width:214px;min-width:214px;background:#fff;border-left:1px solid #eee;display:flex;flex-direction:column;padding:14px;}
+.sc-label{font-size:9px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;color:#bbb;margin-bottom:8px;}
+.mt-badge{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:10px 12px;display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+.mt-icon{width:26px;height:26px;border-radius:5px;background:#111;border:1px solid #333;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.mt-name{font-size:11px;color:#fff;font-weight:500;}
+.mt-sub{font-size:9px;color:#555;margin-top:1px;}
+.mt-status{display:flex;align-items:center;gap:4px;margin-top:3px;font-size:9px;color:#3B6D11;}
+.mt-dot{width:4px;height:4px;border-radius:50%;background:#3B6D11;}
+.order-preview{background:#fafafa;border:1px solid #f0f0f0;border-radius:8px;padding:10px;margin-bottom:14px;}
+.op-row{display:flex;justify-content:space-between;font-size:10px;margin-bottom:4px;}
+.op-key{color:#bbb;}
+.op-val{color:#333;font-weight:500;text-align:right;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.op-divider{height:1px;background:#eee;margin:6px 0;}
+.op-total{display:flex;justify-content:space-between;font-size:11px;}
+.op-total-key{color:#999;}
+.op-total-val{color:#c41227;font-weight:500;}
+.readiness{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
+.ritem{display:flex;align-items:center;gap:6px;font-size:10px;}
+.ritem.ok{color:#3B6D11;}
+.ritem.no{color:#bbb;}
+.r-icon{width:13px;height:13px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ritem.ok .r-icon{background:#3B6D11;}
+.ritem.no .r-icon{background:#e0e0e0;}
+.submit-btn{width:100%;padding:11px;border-radius:8px;background:#c41227;color:#fff;border:none;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;transition:background .15s;margin-bottom:6px;}
+.submit-btn:hover{background:#a80f1f;}
+.submit-btn:disabled{background:#e8a0a8;cursor:not-allowed;}
+.sec-btn{width:100%;padding:8px;border-radius:8px;background:transparent;color:#888;border:1px solid #eee;font-size:11px;cursor:pointer;font-family:inherit;}
+.sec-btn:hover{background:#fafafa;}
+.success-overlay{position:absolute;inset:0;background:rgba(245,245,245,.97);display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;border-radius:12px;z-index:10;}
+.success-icon{width:52px;height:52px;border-radius:50%;background:#0e1a0e;border:2px solid #3B6D11;display:flex;align-items:center;justify-content:center;}
+.success-title{font-size:15px;font-weight:500;color:#222;}
+.success-sub{font-size:11px;color:#888;text-align:center;max-width:260px;line-height:1.6;}
+.success-pill{background:#0e1a0e;border:1px solid #1a3a1a;border-radius:20px;padding:4px 14px;font-size:10px;color:#3B6D11;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{width:18px;height:18px;border:2px solid #eee;border-top-color:#c41227;border-radius:50%;animation:spin .7s linear infinite;}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="sidebar">
+    <div class="sb-top">
+      <div>
+        <div class="sb-logo-partners">Partners Dental</div>
+        <div class="sb-logo-solutions">Solutions</div>
+      </div>
+    </div>
+    <div class="pt" id="sbPt">
+      <div class="pt-name" id="sbName">Dr. Smith</div>
+      <div class="pt-sub" id="sbSub">Smith Ortho</div>
+      <div class="pt-pill none" id="sbPill">No active case</div>
+    </div>
+    <div class="nl">Navigation</div>
+    <div class="ni on" id="sn-dash"><div class="nd"></div>Dashboard</div>
+    <div class="ni dim" id="sn-intake"><div class="nd"></div>New case</div>
+    <div class="ni dim" id="sn-scan"><div class="nd"></div>Load scan</div>
+    <div class="ni dim" id="sn-design"><div class="nd"></div>Design appliance</div>
+    <div class="ni dim" id="sn-review"><div class="nd"></div>Review &amp; submit</div>
+    <div class="sb-bot"><div class="av">DS</div>Dr. Smith</div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="bc" id="bcRow"><span class="bs on">Dashboard</span></div>
+      <button class="tbtn" id="backBtn" style="display:none" onclick="handleBack()">&#8592; Back</button>
+      <button class="tbtn r" id="mainBtn" style="display:none" onclick="handleMain()">Continue &#8594;</button>
+    </div>
+
+    <div class="screen active" id="screen-dash">
+      <div class="dashboard">
+        <div class="dash-greeting">Good morning, Dr. Smith</div>
+        <div class="dash-sub">Wednesday, March 25, 2026 &middot; Smith Ortho</div>
+        <div class="stat-row">
+          <div class="stat-card"><div class="sc-num">7</div><div class="sc-lbl">Cases this week</div></div>
+          <div class="stat-card"><div class="sc-num red">3</div><div class="sc-lbl">Pending approval</div></div>
+          <div class="stat-card"><div class="sc-num">12</div><div class="sc-lbl">Submitted YTD</div></div>
+        </div>
+        <div class="notif-row">
+          <div class="notif-head">Notifications</div>
+          <div class="notif-item"><div class="notif-dot red"></div><div style="flex:1"><div class="notif-text">Case #3041 &mdash; Marcus Lee needs your approval before submission</div><div class="notif-time">2 hours ago</div></div></div>
+          <div class="notif-item"><div class="notif-dot amber"></div><div style="flex:1"><div class="notif-text">Case #3038 &mdash; Sarah Kim due in 2 days, currently in fabrication</div><div class="notif-time">Yesterday</div></div></div>
+          <div class="notif-item"><div class="notif-dot green"></div><div style="flex:1"><div class="notif-text">Case #3035 &mdash; Ryan Park shipped &middot; tracking #PDS-88214</div><div class="notif-time">Mar 23</div></div></div>
+        </div>
+        <div class="queue-head">
+          <div class="queue-title">Recent cases</div>
+          <div class="queue-new" onclick="goToIntake()">+ New case</div>
+        </div>
+        <div class="case-list">
+          <div class="case-row" onclick="goToIntake()"><div class="case-init" style="background:#fef0f2;color:#c41227;">JT</div><div class="case-info"><div class="case-name">Jamie Torres</div><div class="case-meta">#3047 &middot; MARPE w/ Tigerscrew</div></div><div class="case-badge review">Needs review</div></div>
+          <div class="case-row"><div class="case-init" style="background:#fff8e6;color:#7a5a00;">ML</div><div class="case-info"><div class="case-name">Marcus Lee</div><div class="case-meta">#3041 &middot; Twin Block</div></div><div class="case-badge pending">Pending</div></div>
+          <div class="case-row"><div class="case-init" style="background:#eaf5e0;color:#3B6D11;">SK</div><div class="case-info"><div class="case-name">Sarah Kim</div><div class="case-meta">#3038 &middot; Upper Hawley</div></div><div class="case-badge submitted">Submitted</div></div>
+          <div class="case-row"><div class="case-init" style="background:#eaf5e0;color:#3B6D11;">RP</div><div class="case-info"><div class="case-name">Ryan Park</div><div class="case-meta">#3035 &middot; RPE</div></div><div class="case-badge submitted">Shipped</div></div>
+        </div>
+        <button class="new-btn-big" onclick="goToIntake()">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M2 7h10" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
+          Start new case
+        </button>
+      </div>
+    </div>
+
+    <div class="screen" id="screen-intake">
+      <div class="intake-wrap">
+        <div class="intake-card">
+          <div class="ic-title">Start a case</div>
+          <div class="ic-sub">New patient or find an existing one</div>
+          <div class="ic-btns">
+            <div class="ic-opt on" id="opt-new" onclick="selectOpt('new')">
+              <div class="ic-opt-icon" style="background:#fef0f2;"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="6" r="3.5" stroke="#c41227" stroke-width="1.3"/><path d="M3 15c0-3.314 2.686-5 6-5s6 1.686 6 5" stroke="#c41227" stroke-width="1.3" stroke-linecap="round"/><path d="M13 3v4M11 5h4" stroke="#c41227" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+              <div class="ic-opt-label">New patient</div><div class="ic-opt-sub">First visit</div>
+            </div>
+            <div class="ic-opt" id="opt-exist" onclick="selectOpt('exist')">
+              <div class="ic-opt-icon" style="background:#f0f0f0;"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="6" r="3.5" stroke="#888" stroke-width="1.3"/><path d="M3 15c0-3.314 2.686-5 6-5s6 1.686 6 5" stroke="#888" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+              <div class="ic-opt-label">Existing patient</div><div class="ic-opt-sub">Find by name or #</div>
+            </div>
+          </div>
+          <div id="newPatientFields">
+            <div class="field-wrap"><div class="field-label">Patient name</div><div class="field-row"><input class="fi" id="ptFirst" placeholder="First name"/><input class="fi" id="ptLast" placeholder="Last name"/></div></div>
+            <div class="field-wrap"><div class="field-label">Date of birth</div><input class="fi" type="date" id="ptDob" style="width:100%"/></div>
+          </div>
+          <div id="existPatientFields" style="display:none;">
+            <div class="field-wrap">
+              <div class="field-label">Search by name or case #</div>
+              <input class="fi" style="width:100%" id="ptSearch" placeholder="e.g. Torres or #3047" oninput="searchPatients(this.value)"/>
+              <div class="search-results" id="searchResults">
+                <div class="sr-item" onclick="selectPatient('Jamie Torres','#3047','Age 12')"><div><div class="sr-name">Jamie Torres</div><div class="sr-meta">#3047 &middot; Age 12</div></div><div style="font-size:9px;color:#bbb;">Last visit Mar 10</div></div>
+                <div class="sr-item" onclick="selectPatient('Marcus Lee','#3041','Age 15')"><div><div class="sr-name">Marcus Lee</div><div class="sr-meta">#3041 &middot; Age 15</div></div><div style="font-size:9px;color:#bbb;">Last visit Feb 28</div></div>
+                <div class="sr-item" onclick="selectPatient('Sarah Kim','#3038','Age 11')"><div><div class="sr-name">Sarah Kim</div><div class="sr-meta">#3038 &middot; Age 11</div></div><div style="font-size:9px;color:#bbb;">Last visit Feb 14</div></div>
+              </div>
+            </div>
+          </div>
+          <button class="ic-continue" onclick="goToScan()">Continue to scan &#8594;</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="screen" id="screen-scan">
+      <div class="scan-wrap">
+        <div class="scan-card">
+          <div style="font-size:14px;font-weight:500;color:#222;margin-bottom:4px;text-align:left;">Load patient scan</div>
+          <div style="font-size:10px;color:#aaa;margin-bottom:16px;text-align:left;">Fetch from connected scanner or upload STL</div>
+          <div class="scan-patient">
+            <div class="sp-init" id="scanInitials">JT</div>
+            <div><div class="sp-name" id="scanPtName">Jamie Torres</div><div class="sp-meta" id="scanPtMeta">#3047 &middot; Age 12 &middot; Dr. Smith</div></div>
+          </div>
+          <div class="scan-entry">
+            <div class="scan-source">
+              <button class="src-btn on" id="srcItero" onclick="setSrc('itero')">iTero</button>
+              <button class="src-btn" id="srcThree" onclick="setSrc('3shape')">3Shape</button>
+              <button class="src-btn" id="srcUpload" onclick="setSrc('upload')">STL upload</button>
+            </div>
+            <div id="scanFetchRow" class="scan-input-row">
+              <input class="fi" id="scanNumInput" placeholder="Enter scan # e.g. IT-48821" style="flex:1;"/>
+              <button class="scan-fetch" onclick="fetchScan()">Fetch scan</button>
+            </div>
+            <div id="scanUploadRow" style="display:none;">
+              <div style="border:1px dashed #ddd;border-radius:8px;padding:16px;text-align:center;cursor:pointer;background:#fafafa;" onclick="simulateUpload()">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="margin:0 auto 6px;display:block;"><path d="M10 13V5M10 5l-3 3M10 5l3 3" stroke="#bbb" stroke-width="1.3" stroke-linecap="round"/><path d="M3 14v2a1 1 0 001 1h12a1 1 0 001-1v-2" stroke="#bbb" stroke-width="1.3" stroke-linecap="round"/></svg>
+                <div style="font-size:10px;color:#bbb;">Click to upload .stl or .ply file</div>
+              </div>
+            </div>
+          </div>
+          <div class="scan-status" id="scanStatus"><div style="font-size:10px;color:#ccc;">Enter scan number above to fetch</div></div>
+          <button class="scan-proceed" id="scanProceed" onclick="goToDesign()">Design appliance &#8594;</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="screen" id="screen-design">
+      <div class="stage">
+        <div class="stage-tag"><div class="gdot"></div><span id="stageLabel">Upper arch</span></div>
+        <div class="vtog"><button class="vb on">Upper</button><button class="vb">Lower</button></div>
+        <div class="canvas">
+          <div class="arch-base">
+            <svg width="300" height="300" viewBox="0 0 300 300" fill="none">
+              <ellipse cx="150" cy="165" rx="98" ry="78" fill="#e8e8e8" stroke="#d0d0d0" stroke-width="1"/>
+              <ellipse cx="150" cy="165" rx="73" ry="56" fill="#F0F0F0" stroke="#ddd" stroke-width=".8"/>
+              <rect x="82" y="140" width="16" height="19" rx="2" fill="#ddd" stroke="#ccc" stroke-width=".5"/>
+              <rect x="101" y="130" width="16" height="19" rx="2" fill="#ddd" stroke="#ccc" stroke-width=".5"/>
+              <rect x="122" y="123" width="18" height="20" rx="2" fill="#ddd" stroke="#ccc" stroke-width=".5"/>
+              <rect x="144" y="121" width="18" height="20" rx="2" fill="#ddd" stroke="#ccc" stroke-width=".5"/>
+              <rect x="166" y="123" width="18" height="20" rx="2" fill="#ddd" stroke="#ccc" stroke-width=".5"/>
+              <rect x="187" y="130" width="16" height="19" rx="2" fill="#ddd" stroke="#ccc" stroke-width=".5"/>
+              <rect x="206" y="140" width="16" height="19" rx="2" fill="#ddd" stroke="#ccc" stroke-width=".5"/>
+              <rect x="88" y="162" width="20" height="23" rx="2" fill="#ddd" stroke="#ccc" stroke-width=".5"/>
+              <rect x="204" y="162" width="20" height="23" rx="2" fill="#ddd" stroke="#ccc" stroke-width=".5"/>
+              <rect x="88" y="188" width="20" height="22" rx="2" fill="#e2e2e2" stroke="#ccc" stroke-width=".5"/>
+              <rect x="204" y="188" width="20" height="22" rx="2" fill="#e2e2e2" stroke="#ccc" stroke-width=".5"/>
+            </svg>
+          </div>
+          <div class="ilayer" id="ilayer"></div>
+        </div>
+        <div class="price-strip"><div><div class="ps-label">Estimated total</div><div class="ps-total" id="totalPrice">$0.00</div></div><div class="ps-break" id="priceBreak"></div></div>
+      </div>
+      <div class="panel" id="panel"></div>
+    </div>
+
+    <div class="screen" id="screen-review">
+      <div class="review-col">
+        <div class="rsec">
+          <div class="rsec-head"><span class="rsec-title">Patient info</span><button class="rsec-edit" onclick="goTo('intake')">Edit</button></div>
+          <div class="rsec-body"><div class="info-grid">
+            <div><div class="ig-label">Patient</div><div class="ig-val" id="rv-name">&#8212;</div></div>
+            <div><div class="ig-label">Age</div><div class="ig-val" id="rv-age">&#8212;</div></div>
+            <div><div class="ig-label">Doctor</div><div class="ig-val">Dr. Smith</div></div>
+            <div><div class="ig-label">Case #</div><div class="ig-val" id="rv-case">&#8212;</div></div>
+            <div><div class="ig-label">Practice</div><div class="ig-val">Smith Ortho</div></div>
+            <div><div class="ig-label">Scan ID</div><div class="ig-val" id="rv-scan">&#8212;</div></div>
+          </div></div>
+        </div>
+        <div class="rsec">
+          <div class="rsec-head"><span class="rsec-title">Order summary</span><button class="rsec-edit" onclick="goTo('design')">Edit</button></div>
+          <div class="rsec-body"><div class="order-rows" id="reviewRows"></div><div class="divider"></div><div class="total-row"><span class="total-label">Estimated total</span><span class="total-val" id="reviewTotal">$0.00</span></div></div>
+        </div>
+        <div class="rsec">
+          <div class="rsec-head"><span class="rsec-title">Due date &amp; priority</span></div>
+          <div class="rsec-body" style="display:flex;flex-direction:column;gap:10px;">
+            <div class="date-row"><input class="date-input" type="date" value="2026-04-08" id="dueDateInput"/><div style="font-size:10px;color:#bbb;white-space:nowrap;" id="bizDays">10 business days</div></div>
+            <div class="priority-row">
+              <div class="pflag standard on" onclick="setPriority('standard',this)"><div class="pflag-dot"></div>Standard</div>
+              <div class="pflag rush" onclick="setPriority('rush',this)"><div class="pflag-dot"></div>Rush +$25</div>
+              <div class="pflag urgent" onclick="setPriority('urgent',this)"><div class="pflag-dot"></div>Urgent +$50</div>
+            </div>
+          </div>
+        </div>
+        <div class="rsec">
+          <div class="rsec-head"><span class="rsec-title">Rx / clinical notes</span></div>
+          <div class="rsec-body"><textarea class="notes" rows="3" placeholder="e.g. narrow palate, use 14mm screw..."></textarea></div>
+        </div>
+        <div class="rsec">
+          <div class="rsec-head"><span class="rsec-title">Doctor approval</span></div>
+          <div class="rsec-body" style="display:flex;flex-direction:column;gap:10px;">
+            <div class="sig-box"><canvas class="sig-canvas" id="sigCanvas" width="520" height="140"></canvas><div class="sig-prompt" id="sigPrompt"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M2 12L6 8l4 2 4-5" stroke="#ccc" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Sign here</div><button class="sig-clear" id="sigClear" onclick="clearSig()">Clear</button></div>
+            <div class="sig-label">Dr. Smith &middot; <span id="sigTs"></span></div>
+            <div class="checklist">
+              <div class="chk" onclick="toggleChk(this,'chk1')" id="chk1"><div class="chk-box"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div><span class="chk-label">Appliance specs confirmed for this patient</span></div>
+              <div class="chk" onclick="toggleChk(this,'chk2')" id="chk2"><div class="chk-box"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div><span class="chk-label">Authorized Partners Dental Solutions to fabricate</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="submit-col">
+        <div class="sc-label">Destination</div>
+        <div class="mt-badge"><div class="mt-icon"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="10" rx="2" fill="#333" stroke="#555" stroke-width=".8"/><path d="M5 7h6M5 9.5h4" stroke="#888" stroke-width=".9" stroke-linecap="round"/></svg></div><div><div class="mt-name">MagicTouch</div><div class="mt-sub">Partners Dental Solutions</div><div class="mt-status"><div class="mt-dot"></div>Connected</div></div></div>
+        <div class="sc-label">Order preview</div>
+        <div class="order-preview" id="opPreview"></div>
+        <div class="sc-label" style="margin-top:2px;">Ready to submit</div>
+        <div class="readiness">
+          <div class="ritem ok"><div class="r-icon"><svg width="7" height="5" viewBox="0 0 7 5" fill="none"><path d="M.5 2.5l2 2L6.5.5" stroke="white" stroke-width="1.2" stroke-linecap="round"/></svg></div>Scan loaded</div>
+          <div class="ritem ok" id="r-app"><div class="r-icon"><svg width="7" height="5" viewBox="0 0 7 5" fill="none"><path d="M.5 2.5l2 2L6.5.5" stroke="white" stroke-width="1.2" stroke-linecap="round"/></svg></div>Appliance selected</div>
+          <div class="ritem no" id="r-sig"><div class="r-icon"></div>Signature required</div>
+          <div class="ritem no" id="r-chk"><div class="r-icon"></div>Approval checkboxes</div>
+        </div>
+        <div style="margin-top:auto;">
+          <button class="submit-btn" id="submitBtn" onclick="submitOrder()" disabled>Submit to MagicTouch &#8594;</button>
+          <button class="sec-btn" onclick="saveDraft()">Save as draft</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="bbar">
+      <div class="spills" id="spills"></div>
+    </div>
+  </div>
+
+  <div class="success-overlay" id="successOverlay">
+    <div class="success-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 12l4 4 10-10" stroke="#3B6D11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="success-title">Order submitted to MagicTouch</div>
+    <div class="success-sub" id="successSub">Your order has been sent to Partners Dental Solutions.</div>
+    <div class="success-pill" id="successPill">Standard priority</div>
+    <button class="tbtn r" style="margin-top:10px;" onclick="newOrder()">Back to dashboard</button>
+  </div>
+</div>
+
+<script>
+const RED='#c41227',GRY='#666',BLU='#185FA5',PRP='#7F77DD',GRN='#2d6a4f';
+const COLORS_LIST=['#dbeafe','#fce7f3','#dcfce7','#fef9c3','#ede9fe','#ffedd5','#e0f2fe','#fee2e2'];
+const CATALOG={fixed_expansion:{label:'Fixed expansion',color:RED,appliances:[{id:'rpe',name:'Rapid Palatal Expander',price:108.90,icon:'rpe'},{id:'arnold',name:'Arnold Expander',price:168.00,icon:'arnold'},{id:'leaf',name:'Leaf Expander',price:145.00,icon:'leaf'},{id:'haas',name:'Haas Expander',price:140.00,icon:'haas'},{id:'fan',name:'Fan Expander',price:162.00,icon:'fan'},{id:'quadhelix',name:'Fixed Quad Helix',price:103.40,icon:'quad'},{id:'titanrpe',name:'Titanium RPE',price:320.00,icon:'rpe'}],addons:[{id:'expscrew',name:'Expansion Screw',price:35.00},{id:'hghook',name:'Headgear Hook',price:24.00},{id:'abp',name:'Anterior Bite Plate',price:20.16},{id:'lsweld',name:'Laser Weld Joint',price:19.00}],colors:false},fixed_holding:{label:'Fixed holding',color:RED,appliances:[{id:'llha',name:'Lower Lingual Arch',price:63.00,icon:'lb'},{id:'nance',name:'Nance',price:84.00,icon:'nance'},{id:'tpa',name:'TPA Soldered',price:63.00,icon:'tpa'},{id:'bandloop',name:'Band and Loop',price:70.00,icon:'bandloop'},{id:'ulua',name:'Upper Lingual U Arch',price:66.00,icon:'uarch'}],addons:[{id:'clasp',name:'Clasp',price:12.00},{id:'spring',name:'Spring',price:11.00},{id:'lsweld2',name:'Laser Weld Joint',price:19.00}],colors:false},removable:{label:'Removable / Retention',color:GRY,appliances:[{id:'hawley_upper',name:'Upper Hawley',price:72.80,icon:'hawley'},{id:'hawley_lower',name:'Lower Hawley',price:72.80,icon:'hawley'},{id:'hawley_44',name:'4-4 Hawley',price:82.50,icon:'hawley'},{id:'wraparound',name:'Wrap Around',price:108.00,icon:'wrap'},{id:'lingbond',name:'Lingual Bonded',price:44.00,icon:'lingbond'}],addons:[{id:'clasp_r',name:'Clasp',price:12.00},{id:'aclbow',name:'Acrylic Labial Bow',price:19.44}],colors:true},clear:{label:'Clear / Essix',color:GRY,appliances:[{id:'essix_std',name:'Standard Essix',price:39.20,icon:'essix'},{id:'essix_1mm',name:'1mm Essix',price:52.80,icon:'essix'},{id:'essix_15',name:'1.5mm Essix',price:55.00,icon:'essix'},{id:'essix_2mm',name:'2mm Essix',price:59.40,icon:'essix'},{id:'aligner',name:'Aligner',price:55.00,icon:'essix'}],addons:[],colors:false},airway:{label:'Airway / MARPE',color:BLU,appliances:[{id:'marpe_leone',name:'MARPE Leone Slim',price:492.80,icon:'marpe'},{id:'marpe_tiger',name:'MARPE w/ Tigerscrew',price:582.40,icon:'marpe'},{id:'marpe_shield',name:'Shielded MARPE',price:655.22,icon:'marpe'},{id:'mse',name:'MSE Expander',price:263.20,icon:'mse'}],addons:[{id:'driver',name:'Driver',price:89.60},{id:'tadscrew',name:'TAD Screw',price:61.60},{id:'digiconsult',name:'Digital Consultation',price:106.40},{id:'extralumen',name:'Extra Lumen Placement',price:40.00}],colors:false},herbst:{label:'Herbst',color:PRP,appliances:[{id:'herbst_3d',name:'Herbst w/ 3D Bands',price:451.50,icon:'herbst'},{id:'herbst_rollo',name:'Herbst w/ Rollo Bands',price:409.50,icon:'herbst'}],addons:[{id:'h_rpe',name:'Herbst RPE',price:63.00},{id:'h_tpa',name:'Herbst TPA',price:42.00},{id:'h_arnold',name:'Herbst Arnold',price:31.50}],colors:false},functional:{label:'Functional',color:PRP,appliances:[{id:'twinblock',name:'Twin Block',price:308.00,icon:'twinblock'},{id:'bionator',name:'Bionator',price:243.00,icon:'bionator'},{id:'mara',name:'MARA',price:424.44,icon:'mara'},{id:'frankel',name:'Frankel III',price:395.36,icon:'frankel'},{id:'amda',name:'AMDA',price:800.00,icon:'amda'}],addons:[{id:'maraelbow',name:'MARA Elbow',price:27.00},{id:'marakit',name:'MARA Kit',price:118.80}],colors:false},distalizer:{label:'Distalizers',color:GRN,appliances:[{id:'pendulum',name:'Pendulum',price:108.00,icon:'distal'},{id:'pendex',name:'Pendex',price:135.00,icon:'distal'},{id:'bilatdj',name:'Bilateral Distal Jet',price:189.00,icon:'distal'},{id:'lipbump',name:'Lip Bumper',price:168.00,icon:'distal'},{id:'trex',name:'T-Rex',price:148.50,icon:'distal'}],addons:[{id:'unipend',name:'Unilateral Pendulum Arm',price:27.50},{id:'expscrew2',name:'Expansion Screw',price:35.00}],colors:false}};
+const ICONS={rpe:(c)=>`<svg width="38" height="30" viewBox="0 0 38 30" fill="none"><rect x="6" y="10" width="26" height="12" rx="2" fill="${c}" fill-opacity=".18" stroke="${c}" stroke-width="1.2"/><line x1="19" y1="10" x2="19" y2="22" stroke="${c}" stroke-width="1.2"/><rect x="15" y="13" width="8" height="6" rx="1" fill="${c}" fill-opacity=".45"/><line x1="6" y1="16" x2="2" y2="7" stroke="${c}" stroke-width="1"/><line x1="32" y1="16" x2="36" y2="7" stroke="${c}" stroke-width="1"/><circle cx="2" cy="6" r="2.2" fill="${c}"/><circle cx="36" cy="6" r="2.2" fill="${c}"/></svg>`,arnold:(c)=>`<svg width="38" height="30" viewBox="0 0 38 30" fill="none"><path d="M5 25 Q10 7 19 9 Q28 7 33 25" stroke="${c}" stroke-width="1.4" fill="none"/><path d="M5 25 Q12 18 19 17 Q26 18 33 25" fill="${c}" fill-opacity=".12" stroke="${c}" stroke-width="1.2"/><circle cx="5" cy="25" r="2.5" fill="${c}"/><circle cx="33" cy="25" r="2.5" fill="${c}"/></svg>`,leaf:(c)=>`<svg width="38" height="30" viewBox="0 0 38 30" fill="none"><ellipse cx="19" cy="17" rx="13" ry="9" fill="${c}" fill-opacity=".14" stroke="${c}" stroke-width="1.2"/><circle cx="19" cy="17" r="2.5" fill="${c}" fill-opacity=".6"/></svg>`,haas:(c)=>`<svg width="38" height="30" viewBox="0 0 38 30" fill="none"><rect x="6" y="10" width="26" height="13" rx="2" fill="${c}" fill-opacity=".14" stroke="${c}" stroke-width="1.2"/><line x1="19" y1="10" x2="19" y2="23" stroke="${c}" stroke-width="1.2"/><circle cx="9" cy="7" r="2" fill="${c}"/><circle cx="29" cy="7" r="2" fill="${c}"/></svg>`,fan:(c)=>`<svg width="38" height="30" viewBox="0 0 38 30" fill="none"><path d="M8 22 Q12 8 19 8 Q26 8 30 22" stroke="${c}" stroke-width="1.4" fill="${c}" fill-opacity=".1"/><circle cx="19" cy="10" r="2" fill="${c}"/></svg>`,quad:(c)=>`<svg width="38" height="30" viewBox="0 0 38 30" fill="none"><path d="M8 20 Q8 8 19 8 Q30 8 30 20" stroke="${c}" stroke-width="1.4" fill="none"/><circle cx="8" cy="20" r="3" fill="${c}"/><circle cx="30" cy="20" r="3" fill="${c}"/></svg>`,lb:(c)=>`<svg width="38" height="30" viewBox="0 0 38 30" fill="none"><path d="M4 24 Q19 5 34 24" stroke="${c}" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="4" cy="24" r="3.5" fill="${c}"/><circle cx="34" cy="24" r="3.5" fill="${c}"/></svg>`,bandloop:(c)=>`<svg width="38" height="30" viewBox="0 0 38 30" fill="none"><rect x="4" y="12" width="10" height="8" rx="1.5" fill="${c}" fill-opacity=".2" stroke="${c}" stroke-width="1"/><path d="M14 16 Q25 6 34 16" stroke="${c}" stroke-width="1.4" fill="none"/><circle cx="34" cy="16" r="2.5" fill="${c}"/></svg>`,nance:(c)=>`<svg width="38" height="30" viewBox="0 0 38 30" fill="none"><path d="M5 20 Q19 6 33 20" stroke="${c}" stroke-width="1.4" fill="none"/><ellipse cx="19" cy="18" rx="6" ry="4" fill="${c}" fill-opacity=".3" stroke="${c}" stroke-width="1"/><circle cx="5" cy="20" r="3" fill="${c}"/><circle cx="33" cy="20" r="3" fill="${c}"/></svg>`,tpa:(c)=>`<svg width="38" height="30" viewBox="0 0 38 30" fill="none"><path d="M5 18 Q19 5 33 18" stroke="${c}" stroke-width="1.6" fill="none"/><circle cx="5" cy="18" r="3" fill="${c}"/><circle cx="33" cy="18" r="3" fill="${c}"/></svg>`,uarch:(c)=>`<svg width="38" height="30" viewBox="0 0 38 30" fill="none"><path d="M5 24 L5 12 Q5 5 19 5 Q33 5 33 12 L33 24" stroke="${c}" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>`,hawley:(c)=>`<svg width="38" height="30" viewBox="0 0 38 30" fill="none"><path d="M6 26 Q11 7 19 7 Q27 7 32 26" stroke="${c}" stroke-width="1.4" fill="none"/><path d="M6 26 L4 29 M32 26 L34 29" stroke="${c}" stroke-width="1"/><line x1="4" y1="29" x2="34" y2="29" stroke="${c}" stroke-width="1.2"/><circle cx="12" cy="16" r="2.5" fill="none" stroke="${c}" stroke-width="1"/><circle cx="26" cy="16" r="2.5" fill="none" stroke="${c}" stroke-width="1"/></svg>`,wrap:(c)=>`<svg width="38" height="30" viewBox="0 0 38 30" fill="none"><path d="M4 19 Q4 7 19 7 Q34 7 34 19 Q34 27 19 27 Q4 27 4 19Z" fill="${c}" fill-opacity=".1" stroke="${c}" stroke-width="1.2"/></svg>`,lingbond:(c)=>`<svg width="38" height="30" viewBox="0 0 38 30" fill="none"><path d="M6 20 Q19 26 32 20" stroke="${c}" stroke-width="2" stroke-linecap="round"/><circle cx="6" cy="20" r="3" fill="${c}"/><circle cx="32" cy="20" r="3" fill="${c}"/></svg>`,essix:(c)=>`<svg width="38" height="30" viewBox="0 0 38 30" fill="none"><path d="M5 19 Q12 5 19 5 Q26 5 33 19 Q26 25 19 25 Q12 25 5 19Z" fill="${c}" fill-opacity=".1" stroke="${c}" stroke-width="1.2"/></svg>`,marpe:(c)=>`<svg width="38" height="30" viewBox="0 0 38 30" fill="none"><rect x="6" y="11" width="26" height="11" rx="2" fill="${c}" fill-opacity=".14" stroke="${c}" stroke-width="1.2"/><line x1="19" y1="11" x2="19" y2="22" stroke="${c}" stroke-width="1.2"/><circle cx="12" cy="6" r="2.5" fill="${c}" fill-opacity=".7"/><circle cx="26" cy="6" r="2.5" fill="${c}" fill-opacity=".7"/><circle cx="12" cy="27" r="2.5" fill="${c}" fill-opacity=".7"/><circle cx="26" cy="27" r="2.5" fill="${c}" fill-opacity=".7"/></svg>`,mse:(c)=>`<svg width="38" height="30" viewBox="0 0 38 30" fill="none"><rect x="5" y="10" width="28" height="12" rx="2" fill="${c}" fill-opacity=".14" stroke="${c}" stroke-width="1.2"/><line x1="19" y1="10" x2="19" y2="22" stroke="${c}" stroke-width="1.2"/><circle cx="10" cy="5" r="2.5" fill="${c}"/><circle cx="28" cy="5" r="2.5" fill="${c}"/><circle cx="10" cy="27" r="2.5" fill="${c}"/><circle cx="28" cy="27" r="2.5" fill="${c}"/></svg>`,herbst:(c)=>`<svg width="38" height="30" viewBox="0 0 38 30" fill="none"><rect x="2" y="11" width="15" height="10" rx="2" fill="${c}" fill-opacity=".14" stroke="${c}" stroke-width="1.1"/><rect x="21" y="11" width="15" height="10" rx="2" fill="${c}" fill-opacity=".14" stroke="${c}" stroke-width="1.1"/><path d="M17 14 L21 14 M17 18 L21 18" stroke="${c}" stroke-width="1.2" stroke-linecap="round"/><circle cx="9.5" cy="16" r="2" fill="${c}" fill-opacity=".6"/><circle cx="28.5" cy="16" r="2" fill="${c}" fill-opacity=".6"/></svg>`,twinblock:(c)=>`<svg width="38" height="30" viewBox="0 0 38 30" fill="none"><rect x="3" y="9" width="14" height="13" rx="2" fill="${c}" fill-opacity=".14" stroke="${c}" stroke-width="1.1"/><rect x="21" y="9" width="14" height="13" rx="2" fill="${c}" fill-opacity=".14" stroke="${c}" stroke-width="1.1"/><path d="M17 15 L21 15" stroke="${c}" stroke-width="1.2"/></svg>`,bionator:(c)=>`<svg width="38" height="30" viewBox="0 0 38 30" fill="none"><path d="M4 22 Q4 6 19 6 Q34 6 34 22" fill="${c}" fill-opacity=".1" stroke="${c}" stroke-width="1.2"/><circle cx="4" cy="22" r="3" fill="${c}"/><circle cx="34" cy="22" r="3" fill="${c}"/></svg>`,mara:(c)=>`<svg width="38" height="30" viewBox="0 0 38 30" fill="none"><rect x="2" y="10" width="14" height="12" rx="2" fill="${c}" fill-opacity=".14" stroke="${c}" stroke-width="1.1"/><rect x="22" y="10" width="14" height="12" rx="2" fill="${c}" fill-opacity=".14" stroke="${c}" stroke-width="1.1"/><circle cx="9" cy="16" r="3" fill="${c}" fill-opacity=".3" stroke="${c}" stroke-width="1"/><circle cx="29" cy="16" r="3" fill="${c}" fill-opacity=".3" stroke="${c}" stroke-width="1"/></svg>`,frankel:(c)=>`<svg width="38" height="30" viewBox="0 0 38 30" fill="none"><rect x="2" y="8" width="10" height="16" rx="2" fill="${c}" fill-opacity=".14" stroke="${c}" stroke-width="1.1"/><rect x="26" y="8" width="10" height="16" rx="2" fill="${c}" fill-opacity=".14" stroke="${c}" stroke-width="1.1"/><path d="M12 12 Q19 8 26 12 M12 20 Q19 24 26 20" stroke="${c}" stroke-width="1.2" fill="none"/></svg>`,amda:(c)=>`<svg width="38" height="30" viewBox="0 0 38 30" fill="none"><rect x="2" y="7" width="34" height="17" rx="3" fill="${c}" fill-opacity=".1" stroke="${c}" stroke-width="1.2"/><text x="19" y="19" text-anchor="middle" font-size="7" fill="${c}" font-family="system-ui" font-weight="500">AMDA</text></svg>`,distal:(c)=>`<svg width="38" height="30" viewBox="0 0 38 30" fill="none"><path d="M5 15 Q19 5 33 15" stroke="${c}" stroke-width="1.4" fill="none"/><path d="M5 15 L8 20 Q19 25 30 20 L33 15" stroke="${c}" stroke-width="1" fill="${c}" fill-opacity=".1"/><circle cx="5" cy="15" r="3" fill="${c}"/><circle cx="33" cy="15" r="3" fill="${c}"/></svg>`};
+const LARGE={rpe:(c)=>`<svg width="88" height="70" viewBox="0 0 88 70" fill="none"><rect x="14" y="24" width="60" height="24" rx="3" fill="${c}" fill-opacity=".15" stroke="${c}" stroke-width="1.5"/><line x1="44" y1="24" x2="44" y2="48" stroke="${c}" stroke-width="1.5"/><rect x="36" y="30" width="16" height="12" rx="2" fill="${c}" fill-opacity=".4"/><line x1="14" y1="36" x2="4" y2="13" stroke="${c}" stroke-width="1.3"/><line x1="74" y1="36" x2="84" y2="13" stroke="${c}" stroke-width="1.3"/><circle cx="4" cy="11" r="4.5" fill="${c}"/><circle cx="84" cy="11" r="4.5" fill="${c}"/></svg>`,lb:(c)=>`<svg width="88" height="70" viewBox="0 0 88 70" fill="none"><path d="M7 54 Q44 10 81 54" stroke="${c}" stroke-width="2.5" fill="none" stroke-linecap="round"/><circle cx="7" cy="54" r="5.5" fill="${c}"/><circle cx="81" cy="54" r="5.5" fill="${c}"/></svg>`,essix:(c)=>`<svg width="88" height="70" viewBox="0 0 88 70" fill="none"><path d="M7 42 Q24 10 44 10 Q64 10 81 42 Q64 56 44 56 Q24 56 7 42Z" fill="${c}" fill-opacity=".1" stroke="${c}" stroke-width="1.5"/></svg>`,marpe:(c)=>`<svg width="88" height="70" viewBox="0 0 88 70" fill="none"><rect x="14" y="22" width="60" height="26" rx="3" fill="${c}" fill-opacity=".12" stroke="${c}" stroke-width="1.5"/><line x1="44" y1="22" x2="44" y2="48" stroke="${c}" stroke-width="1.5"/><circle cx="25" cy="9" r="5" fill="${c}" fill-opacity=".7"/><circle cx="63" cy="9" r="5" fill="${c}" fill-opacity=".7"/><line x1="25" y1="14" x2="22" y2="22" stroke="${c}" stroke-width="1.3"/><line x1="63" y1="14" x2="66" y2="22" stroke="${c}" stroke-width="1.3"/><circle cx="25" cy="61" r="5" fill="${c}" fill-opacity=".7"/><circle cx="63" cy="61" r="5" fill="${c}" fill-opacity=".7"/><line x1="25" y1="56" x2="22" y2="48" stroke="${c}" stroke-width="1.3"/><line x1="63" y1="56" x2="66" y2="48" stroke="${c}" stroke-width="1.3"/></svg>`,herbst:(c)=>`<svg width="88" height="70" viewBox="0 0 88 70" fill="none"><rect x="4" y="22" width="34" height="26" rx="3" fill="${c}" fill-opacity=".12" stroke="${c}" stroke-width="1.5"/><rect x="50" y="22" width="34" height="26" rx="3" fill="${c}" fill-opacity=".12" stroke="${c}" stroke-width="1.5"/><path d="M38 28 L50 28 M38 42 L50 42" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/><circle cx="21" cy="35" r="5" fill="${c}" fill-opacity=".5"/><circle cx="67" cy="35" r="5" fill="${c}" fill-opacity=".5"/></svg>`,default:(c)=>`<svg width="88" height="70" viewBox="0 0 88 70" fill="none"><ellipse cx="44" cy="38" rx="32" ry="22" fill="${c}" fill-opacity=".12" stroke="${c}" stroke-width="1.5"/><circle cx="44" cy="38" r="5" fill="${c}" fill-opacity=".4"/></svg>`};
+
+let PT={name:'',caseNum:'',age:'',scanId:'',initials:''};
+let S={cat:null,app:null,addons:[],color:COLORS_LIST[0],priority:'standard',signed:false,chk1:false,chk2:false};
+let scanSrc='itero',drawing=false,lastX=0,lastY=0,currentScreen='dash';
+document.getElementById('sigTs').textContent=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+const SCREENS=['dash','intake','scan','design','review'];
+const SCREEN_LABELS=['Dashboard','New case','Load scan','Design','Review'];
+const SB_IDS=['sn-dash','sn-intake','sn-scan','sn-design','sn-review'];
+function goTo(name){SCREENS.forEach(s=>{const el=document.getElementById('screen-'+s);if(el)el.classList.toggle('active',s===name);});currentScreen=name;updateNav();}
+function updateNav(){
+  const idx=SCREENS.indexOf(currentScreen);
+  SB_IDS.forEach((id,i)=>{const el=document.getElementById(id);if(!el)return;if(i<idx)el.className='ni done';else if(i===idx)el.className='ni on';else el.className='ni dim';});
+  document.getElementById('backBtn').style.display=idx>0?'':'none';
+  document.getElementById('mainBtn').style.display=(currentScreen==='review'||currentScreen==='dash')?'none':'';
+  const bcRow=document.getElementById('bcRow');
+  if(currentScreen==='dash'){bcRow.innerHTML='<span class="bs on">Dashboard</span>';}
+  else{const steps=SCREEN_LABELS.slice(1);bcRow.innerHTML=steps.map((l,i)=>{const si=i+1;const cls=si<idx?'bs done':si===idx?'bs on':'bs';return `<span class="${cls}">${l}</span>${i<steps.length-1?'<span class="bx">&rsaquo;</span>':''}`;}).join('');}
+  const spills=document.getElementById('spills');
+  if(['dash','intake','scan'].includes(currentScreen)){spills.innerHTML='<span style="font-size:10px;color:#ccc;">Complete intake to begin design</span>';}
+  else{const dsteps=['Category','Appliance','Add-ons','Review'];spills.innerHTML=dsteps.map((l,i)=>{let cls='sp';if(currentScreen==='review')cls='sp done';else if(currentScreen==='design'&&i===0)cls='sp curr';return `<div class="${cls}">${l}</div>`;}).join('');}
+  const pill=document.getElementById('sbPill');
+  if(['dash','intake'].includes(currentScreen)){pill.className='pt-pill none';pill.textContent='No active case';}
+  else if(currentScreen==='scan'){pill.className='pt-pill scan';pill.textContent='Loading scan...';}
+  else if(currentScreen==='design'){pill.className='pt-pill scan';pill.textContent='Scan loaded';}
+  else if(currentScreen==='review'){pill.className='pt-pill ready';pill.textContent='Ready to submit';}
+}
+function handleBack(){const idx=SCREENS.indexOf(currentScreen);if(idx>0)goTo(SCREENS[idx-1]);}
+function handleMain(){if(currentScreen==='intake')goToScan();else{const idx=SCREENS.indexOf(currentScreen);if(idx<SCREENS.length-1)goTo(SCREENS[idx+1]);}}
+function goToIntake(){goTo('intake');}
+function selectOpt(t){document.getElementById('opt-new').classList.toggle('on',t==='new');document.getElementById('opt-exist').classList.toggle('on',t==='exist');document.getElementById('opt-new').querySelector('.ic-opt-icon').style.background=t==='new'?'#fef0f2':'#f0f0f0';document.getElementById('opt-exist').querySelector('.ic-opt-icon').style.background=t==='exist'?'#fef0f2':'#f0f0f0';document.getElementById('newPatientFields').style.display=t==='new'?'':'none';document.getElementById('existPatientFields').style.display=t==='exist'?'':'none';}
+function searchPatients(v){document.getElementById('searchResults').style.display=v.length>0?'block':'none';}
+function selectPatient(name,cn,meta){PT.name=name;PT.caseNum=cn;const p=meta.split(' ');PT.age=p[0]+' '+p[1];PT.initials=name.split(' ').map(w=>w[0]).join('');document.getElementById('ptSearch').value=name+' '+cn;document.getElementById('searchResults').style.display='none';document.getElementById('sbName').textContent=name;document.getElementById('sbSub').textContent=cn+' · Dr. Smith';}
+function goToScan(){if(!PT.name){const fn=document.getElementById('ptFirst').value.trim();const ln=document.getElementById('ptLast').value.trim();if(fn||ln){PT.name=(fn+' '+ln).trim();PT.initials=(fn[0]||'')+(ln[0]||'');PT.caseNum='#'+Math.floor(3048+Math.random()*10);PT.age='';document.getElementById('sbName').textContent=PT.name;document.getElementById('sbSub').textContent=PT.caseNum+' · Dr. Smith';}else{PT.name='Jamie Torres';PT.caseNum='#3047';PT.age='12 years';PT.initials='JT';}}document.getElementById('scanInitials').textContent=PT.initials||'PT';document.getElementById('scanPtName').textContent=PT.name;document.getElementById('scanPtMeta').textContent=PT.caseNum+(PT.age?' · '+PT.age:'')+' · Dr. Smith';goTo('scan');}
+function setSrc(src){scanSrc=src;['srcItero','srcThree','srcUpload'].forEach(id=>document.getElementById(id).classList.remove('on'));const map={itero:'srcItero','3shape':'srcThree',upload:'srcUpload'};document.getElementById(map[src]).classList.add('on');document.getElementById('scanFetchRow').style.display=src==='upload'?'none':'flex';document.getElementById('scanUploadRow').style.display=src==='upload'?'block':'none';}
+function fetchScan(){const num=document.getElementById('scanNumInput').value.trim()||'IT-48821';PT.scanId=num;const st=document.getElementById('scanStatus');st.innerHTML='<div class="spinner"></div><div class="scan-msg">Connecting to '+(scanSrc==='itero'?'iTero':'3Shape')+'...</div><div class="progress-track"><div class="progress-bar" id="pbar"></div></div>';let pct=0;const msgs=['Authenticating...','Fetching scan data...','Processing arch geometry...','Rendering model...','Complete'];let mi=0;const iv=setInterval(()=>{pct+=2;const pb=document.getElementById('pbar');if(pb)pb.style.width=pct+'%';if(pct%20===0&&mi<msgs.length-1){mi++;const sm=document.querySelector('.scan-msg');if(sm)sm.textContent=msgs[mi];}if(pct>=100){clearInterval(iv);setTimeout(()=>{st.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;gap:6px;"><div class="scan-ok-icon"><svg width="18" height="14" viewBox="0 0 18 14" fill="none"><path d="M2 7l4 4 10-10" stroke="#3B6D11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="scan-ok-label">Scan loaded successfully</div><div class="scan-ok-sub">'+PT.caseNum+' · Upper + Lower arch · '+num+'</div></div>';document.getElementById('scanProceed').style.display='block';document.getElementById('stageLabel').textContent='Upper arch · '+PT.caseNum;document.getElementById('rv-name').textContent=PT.name;document.getElementById('rv-age').textContent=PT.age||'—';document.getElementById('rv-case').textContent=PT.caseNum;document.getElementById('rv-scan').textContent=PT.scanId;},300);}},40);}
+function simulateUpload(){PT.scanId='STL-upload';const st=document.getElementById('scanStatus');st.innerHTML='<div class="spinner"></div><div class="scan-msg">Processing STL file...</div><div class="progress-track"><div class="progress-bar" id="pbar"></div></div>';let pct=0;const iv=setInterval(()=>{pct+=3;const pb=document.getElementById('pbar');if(pb)pb.style.width=pct+'%';if(pct>=100){clearInterval(iv);setTimeout(()=>{st.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;gap:6px;"><div class="scan-ok-icon"><svg width="18" height="14" viewBox="0 0 18 14" fill="none"><path d="M2 7l4 4 10-10" stroke="#3B6D11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="scan-ok-label">STL uploaded successfully</div><div class="scan-ok-sub">Upper + Lower arch detected</div></div>';document.getElementById('scanProceed').style.display='block';},300);}},40);}
+function goToDesign(){goTo('design');renderPanel();updatePrice();}
+function fmt(n){return '$'+n.toFixed(2);}
+function catColor(){return S.cat&&CATALOG[S.cat]?CATALOG[S.cat].color:RED;}
+function calcTotal(){let t=0;if(S.app&&S.cat){const a=CATALOG[S.cat].appliances.find(x=>x.id===S.app);if(a)t+=a.price;}if(S.cat)S.addons.forEach(id=>{const a=CATALOG[S.cat].addons.find(x=>x.id===id);if(a)t+=a.price;});return t+({standard:0,rush:25,urgent:50}[S.priority]||0);}
+function updatePrice(){const base=S.app&&S.cat?(CATALOG[S.cat].appliances.find(x=>x.id===S.app)||{price:0}).price:0;let aot=0;if(S.cat)S.addons.forEach(id=>{const a=CATALOG[S.cat].addons.find(x=>x.id===id);if(a)aot+=a.price;});document.getElementById('totalPrice').textContent=fmt(base+aot);const parts=[];if(base>0)parts.push('Base: '+fmt(base));if(aot>0)parts.push('Add-ons: '+fmt(aot));document.getElementById('priceBreak').textContent=parts.join(' · ');}
+function updateCanvas(){const layer=document.getElementById('ilayer');layer.innerHTML='';if(!S.app||!S.cat)return;const c=catColor();const app=CATALOG[S.cat].appliances.find(x=>x.id===S.app);if(!app)return;const lgFn=LARGE[app.icon]||LARGE.default;const d=document.createElement('div');d.className='pi';d.style.left='150px';d.style.top='155px';d.innerHTML=lgFn(c);layer.appendChild(d);requestAnimationFrame(()=>requestAnimationFrame(()=>d.classList.add('in')));if(S.addons.length){const pos=[{x:72,y:118},{x:230,y:118},{x:72,y:204},{x:230,y:204},{x:150,y:72}];S.addons.slice(0,5).forEach((id,i)=>{const ao=CATALOG[S.cat].addons.find(x=>x.id===id);if(!ao)return;const p=pos[i];const ad=document.createElement('div');ad.className='pi';ad.style.left=p.x+'px';ad.style.top=p.y+'px';ad.innerHTML=`<svg width="40" height="26" viewBox="0 0 40 26" fill="none"><rect x="1" y="3" width="38" height="20" rx="3" fill="${c}" fill-opacity=".12" stroke="${c}" stroke-width="1"/><text x="20" y="16" text-anchor="middle" font-size="7" fill="${c}" font-family="system-ui">${ao.name.split(' ').slice(0,2).join(' ')}</text></svg>`;layer.appendChild(ad);setTimeout(()=>requestAnimationFrame(()=>ad.classList.add('in')),60+i*50);});}}
+function renderPanel(){const panel=document.getElementById('panel');if(!S.cat){panel.innerHTML='<div class="psec"><div class="plbl">Category</div><div class="catr" id="catGrid"></div></div><div class="psec"><div class="plbl">Appliance</div><div class="na">Select a category first</div></div><div class="psec"><div class="plbl">Add-ons</div><div class="na">Select an appliance first</div></div><div class="pfooter"><div class="pfootlbl">Step 1 · Choose category</div><div class="pbar"><div class="pfill" style="width:25%"></div></div><button class="tbtn r" style="width:100%" onclick="goTo(\'review\');populateReview();">Continue to review &#8594;</button></div>';renderCatGrid();return;}const cat=CATALOG[S.cat];let addHTML=cat.addons&&cat.addons.length?'<div class="att-list">'+cat.addons.map(a=>`<div class="at ${S.addons.includes(a.id)?'on':''}" onclick="toggleAddon('${a.id}')"><span>${a.name}</span><span class="at-price">${fmt(a.price)}</span></div>`).join('')+'</div>':'<div class="na">No add-ons for this category</div>';let colorHTML=cat.colors?'<div class="psec"><div class="plbl">Acrylic color</div><div class="swrow">'+COLORS_LIST.map(cl=>`<div class="sw ${S.color===cl?'on':''}" style="background:${cl}" onclick="setColor('${cl}')"></div>`).join('')+'</div></div>':'';panel.innerHTML='<div class="psec"><div class="plbl">Category</div><div class="catr" id="catGrid"></div></div><div class="psec"><div class="plbl">Appliance</div><div class="app-list" id="appList"></div></div><div class="psec"><div class="plbl">Add-ons</div>'+addHTML+'</div>'+colorHTML+'<div class="pfooter"><div class="pfootlbl">Appliance selected · ready to review</div><div class="pbar"><div class="pfill" style="width:75%"></div></div><button class="tbtn r" style="width:100%" onclick="goTo(\'review\');populateReview();">Continue to review &#8594;</button></div>';renderCatGrid();renderAppList();}
+function renderCatGrid(){const g=document.getElementById('catGrid');if(!g)return;g.innerHTML=Object.entries(CATALOG).map(([k,v])=>`<div class="cb ${S.cat===k?'on':''}" onclick="setCat('${k}')">${v.label}</div>`).join('');}
+function renderAppList(){const el=document.getElementById('appList');if(!el||!S.cat)return;const cat=CATALOG[S.cat];const c=cat.color;el.innerHTML=cat.appliances.map(a=>`<div class="arow ${S.app===a.id?'on':''}" onclick="selApp('${a.id}')"><div class="arow-icon">${(ICONS[a.icon]||ICONS.rpe)(c)}</div><div class="arow-info"><div class="arow-name">${a.name}</div><div class="arow-price">${fmt(a.price)}</div></div><div class="arow-check"></div></div>`).join('');}
+function setCat(k){S.cat=k;S.app=null;S.addons=[];document.getElementById('stageLabel').textContent='Upper arch · '+(PT.caseNum||'');updatePrice();updateCanvas();renderPanel();}
+function selApp(id){S.app=id;S.addons=[];updatePrice();updateCanvas();renderAppList();}
+function toggleAddon(id){S.addons=S.addons.includes(id)?S.addons.filter(x=>x!==id):[...S.addons,id];updatePrice();updateCanvas();renderPanel();}
+function setColor(c){S.color=c;document.querySelectorAll('.sw').forEach(el=>el.classList.toggle('on',el.style.background===c));}
+function populateReview(){if(!S.cat||!S.app)return;const cat=CATALOG[S.cat];const app=cat.appliances.find(x=>x.id===S.app);if(!app)return;let html=`<div class="orow"><div class="orow-left"><div class="orow-dot"></div><div><div class="orow-name">${app.name}</div><div class="orow-type">${cat.label} · Upper arch</div></div></div><div class="orow-price">${fmt(app.price)}</div></div>`;S.addons.forEach(id=>{const ao=cat.addons.find(x=>x.id===id);if(!ao)return;html+=`<div class="orow"><div class="orow-left"><div class="orow-dot gray"></div><div><div class="orow-name">${ao.name}</div><div class="orow-type">Add-on</div></div></div><div class="orow-price">${fmt(ao.price)}</div></div>`;});document.getElementById('reviewRows').innerHTML=html;document.getElementById('reviewTotal').textContent=fmt(calcTotal());const addNames=S.addons.map(id=>{const ao=cat.addons.find(x=>x.id===id);return ao?ao.name:'';}).filter(Boolean).join(', ')||'None';document.getElementById('opPreview').innerHTML=`<div class="op-row"><span class="op-key">Case #</span><span class="op-val">${PT.caseNum}</span></div><div class="op-row"><span class="op-key">Patient</span><span class="op-val">${PT.name}</span></div><div class="op-row"><span class="op-key">Appliance</span><span class="op-val">${app.name}</span></div><div class="op-row"><span class="op-key">Add-ons</span><span class="op-val">${addNames}</span></div><div class="op-row"><span class="op-key">Priority</span><span class="op-val" id="priorityPreview">Standard</span></div><div class="op-divider"></div><div class="op-total"><span class="op-total-key">Total</span><span class="op-total-val" id="totalPreview">${fmt(calcTotal())}</span></div>`;document.getElementById('rv-name').textContent=PT.name;document.getElementById('rv-case').textContent=PT.caseNum;document.getElementById('rv-scan').textContent=PT.scanId||'—';}
+function setPriority(type,el){S.priority=type;document.querySelectorAll('.pflag').forEach(f=>f.classList.remove('on'));el.classList.add('on');const pp=document.getElementById('priorityPreview');if(pp)pp.textContent={standard:'Standard',rush:'Rush +$25',urgent:'Urgent +$50'}[type];const tp=document.getElementById('totalPreview');if(tp)tp.textContent=fmt(calcTotal());document.getElementById('reviewTotal').textContent=fmt(calcTotal());}
+document.getElementById('dueDateInput').addEventListener('change',function(){const d=new Date(this.value+'T00:00:00');const diff=Math.round((d-new Date())/(1000*60*60*24));document.getElementById('bizDays').textContent=Math.max(0,Math.round(diff*5/7))+' business days';});
+const sigCanvas=document.getElementById('sigCanvas');const ctx=sigCanvas.getContext('2d');ctx.strokeStyle='#222';ctx.lineWidth=1.8;ctx.lineCap='round';ctx.lineJoin='round';
+function getPos(e){const r=sigCanvas.getBoundingClientRect();const sx=sigCanvas.width/r.width,sy=sigCanvas.height/r.height;if(e.touches)return{x:(e.touches[0].clientX-r.left)*sx,y:(e.touches[0].clientY-r.top)*sy};return{x:(e.clientX-r.left)*sx,y:(e.clientY-r.top)*sy};}
+sigCanvas.addEventListener('mousedown',e=>{drawing=true;const p=getPos(e);lastX=p.x;lastY=p.y;document.getElementById('sigPrompt').style.display='none';document.getElementById('sigClear').style.display='block';});
+sigCanvas.addEventListener('mousemove',e=>{if(!drawing)return;const p=getPos(e);ctx.beginPath();ctx.moveTo(lastX,lastY);ctx.lineTo(p.x,p.y);ctx.stroke();lastX=p.x;lastY=p.y;});
+sigCanvas.addEventListener('mouseup',()=>{drawing=false;markSigned();});
+sigCanvas.addEventListener('mouseleave',()=>{if(drawing){drawing=false;markSigned();}});
+function markSigned(){S.signed=true;const ri=document.getElementById('r-sig');ri.className='ritem ok';ri.innerHTML='<div class="r-icon"><svg width="7" height="5" viewBox="0 0 7 5" fill="none"><path d="M.5 2.5l2 2L6.5.5" stroke="white" stroke-width="1.2" stroke-linecap="round"/></svg></div>Signed';checkReady();}
+function clearSig(){ctx.clearRect(0,0,sigCanvas.width,sigCanvas.height);S.signed=false;document.getElementById('sigPrompt').style.display='flex';document.getElementById('sigClear').style.display='none';const ri=document.getElementById('r-sig');ri.className='ritem no';ri.innerHTML='<div class="r-icon"></div>Signature required';checkReady();}
+function toggleChk(el,key){el.classList.toggle('checked');S[key]=el.classList.contains('checked');const both=S.chk1&&S.chk2;const ri=document.getElementById('r-chk');if(both){ri.className='ritem ok';ri.innerHTML='<div class="r-icon"><svg width="7" height="5" viewBox="0 0 7 5" fill="none"><path d="M.5 2.5l2 2L6.5.5" stroke="white" stroke-width="1.2" stroke-linecap="round"/></svg></div>Approved';}else{ri.className='ritem no';ri.innerHTML='<div class="r-icon"></div>Approval checkboxes';}checkReady();}
+function checkReady(){document.getElementById('submitBtn').disabled=!(S.signed&&S.chk1&&S.chk2);}
+function submitOrder(){if(!S.signed||!S.chk1||!S.chk2)return;const cat=S.cat?CATALOG[S.cat]:null;const app=cat&&S.app?cat.appliances.find(x=>x.id===S.app):null;document.getElementById('successSub').textContent=(PT.caseNum||'Case')+' — '+(PT.name||'Patient')+(app?' · '+app.name:'')+' has been sent to Partners Dental Solutions.';document.getElementById('successPill').textContent='Due Apr 8, 2026 · '+S.priority.charAt(0).toUpperCase()+S.priority.slice(1)+' priority';document.getElementById('successOverlay').style.display='flex';}
+function saveDraft(){const btn=event.target;btn.textContent='Draft saved';btn.style.color='#3B6D11';setTimeout(()=>{btn.textContent='Save as draft';btn.style.color='';},2000);}
+function newOrder(){S={cat:null,app:null,addons:[],color:COLORS_LIST[0],priority:'standard',signed:false,chk1:false,chk2:false};PT={name:'',caseNum:'',age:'',scanId:'',initials:''};ctx.clearRect(0,0,sigCanvas.width,sigCanvas.height);document.getElementById('sigPrompt').style.display='flex';document.getElementById('sigClear').style.display='none';document.getElementById('chk1').classList.remove('checked');document.getElementById('chk2').classList.remove('checked');document.getElementById('successOverlay').style.display='none';document.getElementById('scanStatus').innerHTML='<div style="font-size:10px;color:#ccc;">Enter scan number above to fetch</div>';document.getElementById('scanProceed').style.display='none';document.getElementById('scanNumInput').value='';document.getElementById('ptSearch').value='';document.getElementById('searchResults').style.display='none';document.getElementById('ptFirst').value='';document.getElementById('ptLast').value='';document.getElementById('sbName').textContent='Dr. Smith';document.getElementById('sbSub').textContent='Smith Ortho';goTo('dash');}
+updateNav();
+</script>
+</body>
+</html>
